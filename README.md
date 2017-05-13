@@ -28,5 +28,8 @@
 					
 ### 4.Functions and usage
 * yahoo_buy_crawler.py:
-	* 1.python yahoo_buy_crawler.py -h
-	* 2.User can specify a number and get the top few products list which was sorted ascend by the discount.  
+	* 1.python yahoo_buy_crawler.py -h: help
+	<img width="562" alt="2017-05-13 8 58 01" src="https://cloud.githubusercontent.com/assets/13972975/26025652/df8818ae-381e-11e7-9357-8dca212b853c.png">
+	
+        * --
+	* 2.python yahoo_buy_crawler.py <mail> <passowrd>: start to crawl
