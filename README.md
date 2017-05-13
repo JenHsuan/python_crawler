@@ -38,3 +38,5 @@
 * draw_product_discount.ipynb
 	* 1.start ipython notebook
 	* 2.run draw_product_discount.ipynb
+	![figure_1](https://cloud.githubusercontent.com/assets/13972975/26025717/36dd0adc-3820-11e7-92e6-22ce358dec61.png)
+
