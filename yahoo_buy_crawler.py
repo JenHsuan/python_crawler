@@ -1,21 +1,33 @@
+#
+# Jen-Hsuan Hsieh 2017/05/13
+#
+
 import sys
 from bs4 import BeautifulSoup as BS
 import requests
 import csv
 import codecs
-
+import argparse
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 
-def export__list_to_csv(product_list):
-    f = open("product_list.csv", "w")
-    f.write(codecs.BOM_UTF8)
-    w = csv.writer(f)
-    w.writerows(product_list)
-    f.close()
-    return 0
+parser = argparse.ArgumentParser(
+    description='''It's a crawler tool target on ''' +
+    '''Yahoo store (https://tw.buy.yahoo.com/)''',
+    epilog="""All's well that ends well.""")
+parser.add_argument('account', help="Yahoo account name")
+parser.add_argument('password', help="Yahoo account password")
+args = parser.parse_args()
+
+
+def export_list_to_csv(product_list):
+    with open('product_list.csv', 'wb') as csvfile:
+        csvfile.write(codecs.BOM_UTF8)
+        spamwriter = csv.writer(csvfile, dialect='excel')
+        for i in range(0, len(product_list), 1):
+            spamwriter.writerow(product_list[i])
 
 
 def get_orig_price(spec, price):
@@ -38,7 +50,7 @@ def get_orig_price(spec, price):
 
 
 def list_popular_products(user_name, password, product_list):
-    title_list = ['type', 'name', 'price', 'original price', 'discount']
+    title_list = ['type', 'name', 'price', 'original price', 'discount', 'id']
     product_list.append(title_list)
     # define request header
     header_info = {
@@ -68,6 +80,7 @@ def list_popular_products(user_name, password, product_list):
     soup = BS(''.join(r.text), 'html.parser')
     site_list = soup.select('.site-list')
     len_category = len(site_list)
+    count = 0
     for i in range(0, len_category, 1):
         flag = False
         label = 'category' + str(i) + " :"
@@ -94,12 +107,6 @@ def list_popular_products(user_name, password, product_list):
                 price = float(hot_info.select('.red-price')[0].find('a').text)
             if len(hot_link.split(':')) == 1:
                 orig_price = price
-                # print 'best one:' + hot_name
-                # print 'price: ', price
-                # print 'original price:', orig_price
-                # print 'discount: ', price / orig_price
-                # print ' --- '
-                # continue
             else:
                 hot_r = requests.get(hot_link)
                 hot_r.encoding = 'utf8'
@@ -108,34 +115,7 @@ def list_popular_products(user_name, password, product_list):
                 orig_price = str(price)
                 orig_price = get_orig_price(spec, price)
                 orig_price = float(orig_price)
-                # orig_price = price
-                # if len(spec) != 0:
-                #    orig_price = spec[0].select('.price')[0].text
-                #    orig_price_len = orig_price.split('$')
-                #    if len(orig_price_len) != 0:
-                #        if len(orig_price.split('$')[1].split(',')) != 0:
-                #            temp = orig_price_len[1].split(',')[0]
-                #            temp_len = len(orig_price_len[1].split(','))
-                #            for i in range(1, temp_len):
-                #                temp = temp + orig_price_len[1].split(',')[i]
-                #            orig_price = float(temp)
-                #        else:
-                #            orig_price = float(orig_price.split('$')[1])
-                #    else:
-                #        orig_price = float(orig_price)
-
-            # print 'best one:' + hot_name
-            # print 'price: ', price
-            # print 'original price:', orig_price
-            # print 'discount: ', price / orig_price
-            # print ' --- '
         elif len(type_two) != 0:
-            # count = count + 1
-            # session_req = dryscrape.Session()
-            # session_req.visit(new_link)
-            # response = session_req.body()
-            # new_soup = BeautifulSoup(''.join(response), 'html.parser')
-            # hot = new_soup.select('.pditem mainitem yui3-u').find('a').text
             flag = True
             price = new_soup.select('.pditem')[0].select('.price')[0]
             hot_name = new_soup.select('.pditem')[0].select('.desc')[0].text
@@ -149,27 +129,6 @@ def list_popular_products(user_name, password, product_list):
             orig_price = str(price)
             orig_price = get_orig_price(spec, price)
             orig_price = float(orig_price)
-            # orig_price = price
-            # if len(spec) != 0:
-            #    orig_price = spec[0].select('.price')[0].text
-            #    orig_price_len = orig_price.split('$')
-            #    if len(orig_price_len) != 0:
-            #        if len(orig_price.split('$')[1].split(',')) != 0:
-            #            tem = orig_price_len[1].split(',')[0]
-            #            temp_len = len(orig_price_len[1].split(','))
-            #            for i in range(1, temp_len):
-            #                tem = tem + orig_price.split('$')[1].split(',')[i]
-            #            orig_price = float(tem)
-            #        else:
-            #            orig_price = float(orig_price.split('$')[1])
-            #    else:
-            #        orig_price = float(orig_price)
-
-            # print 'host one:' + hot_name
-            # print 'price:', price
-            # print 'original price:', orig_price
-            # print 'discount rate: ', price / orig_price
-            # print ' --- '
         else:
             _index = new_r.url.split('=')[1]
             type_one = new_soup.select('#lnk_sub' + _index + '_rank_01_v7')
@@ -186,13 +145,6 @@ def list_popular_products(user_name, password, product_list):
                     price = float(_hot_price)
                 if len(hot_link.split(':')) == 1:
                     orig_price = price
-                    # print 'host one:' + hot_name
-                    # print 'price: ', price
-                    # print 'original price:', orig_price
-                    # print 'discount rate: ', price / orig_price
-                    # print ' --- '
-                    # err_count = err_count + 1
-                    # continue
                 else:
                     hot_r = requests.get(hot_link)
                     hot_r.encoding = 'utf8'
@@ -201,27 +153,6 @@ def list_popular_products(user_name, password, product_list):
                     orig_price = str(price)
                     orig_price = get_orig_price(spec, price)
                     orig_price = float(orig_price)
-                    # orig_price = price
-                    # if len(spec) != 0:
-                    #    orig_price = spec[0].select('.price')[0].text
-                    #    orig_price_len = orig_price.split('$')
-                    #    if len(orig_price_len) != 0:
-                    #        if len(orig_price.split('$')[1].split(',')) != 0:
-                    #            tem = orig_price_len[1].split(',')[0]
-                    #            temp_len = len(orig_price_len[1].split(','))
-                    #            for i in range(1, temp_len):
-                    #               tem = tem + orig_price_len[1].split(',')[i]
-                    #            orig_price = float(tem)
-                    #        else:
-                    #            orig_price = float(orig_price.split('$')[1])
-                    #    else:
-                    #        orig_price = float(orig_price)
-                # print 'host one:' + hot_name
-                # print 'price: ', price
-                # print 'original price:', orig_price
-                # print 'discount:', price / orig_price
-                # print ' --- '
-
             else:
                 payload = {}
                 s = requests.Session()
@@ -234,7 +165,7 @@ def list_popular_products(user_name, password, product_list):
                 payload['username'] = user_name
                 payload['passwd'] = password
                 # print payload
-                r3 = s.post(url_login, data=payload, headers=header_info)
+                s.post(url_login, data=payload, headers=header_info)
                 # 2.authetication
                 r4 = s.get('https://tw.buy.yahoo.com/?sub=' + index)
                 # print index
@@ -262,71 +193,69 @@ def list_popular_products(user_name, password, product_list):
                     orig_price = str(price)
                     orig_price = get_orig_price(spec, price)
                     orig_price = float(orig_price)
-                    # orig_price = price
-                    # if len(spec) != 0:
-                    #    orig_price = spec[0].select('.price')[0].text
-                    #    orig_price_len = orig_price.split('$')
-                    #    if len(orig_price_len) != 0:
-                    #        orig_price_one = orig_price_len[1]
-                    #        if len(orig_price_len[1].split(',')) != 0:
-                    #            tem = orig_price_len[1].split(',')[0]
-                    #            temp_len = len(orig_price_len[1].split(','))
-                    #            for i in range(1, temp_len):
-                    #                tem = tem +orig_price_len[1].split(',')[i]
-                    #            orig_price = float(tem)
-                    #        else:
-                    #            orig_price = float(orig_price.split('$')[1])
-                    # else:
-                    #    orig_price = float(orig_price)
-
-                    # count = count + 1
-                    # print 'host one:' + hot_name
-                    # print 'price: ', price
-                    # print 'original price:', orig_price
-                    # print 'discount rate: ', price / orig_price
-                    # print ' --- '
         temp_dict = []
         temp_dict.append(label_title)
         temp_dict.append(hot_name)
         temp_dict.append(price)
         temp_dict.append(orig_price)
         temp_dict.append(price / orig_price)
+        disnum = temp_dict[4]
         # last_index = len(product_list) - 1
-        if i == 0:
+        if count == 0:
+            count = count + 1
+            temp_dict.append(count)
             product_list.append(temp_dict)
+        elif count == 1:
+            count = count + 1
+            temp_dict.append(count)
+            # compare with first one
+            if disnum < product_list[1][4]:
+                product_list.insert(1, temp_dict)
+            else:
+                product_list.append(temp_dict)
+        elif flag:
+            notInsert = True
+            for j in range(1, count):
+                temp_num1 = product_list[j][4]
+                temp_num2 = product_list[j + 1][4]
+                temp_name1 = product_list[j][1]
+                temp_name2 = product_list[j + 1][1]
+                if temp_dict[1] == temp_name1 or temp_dict[1] == temp_name2:
+                    notInsert = False
+                    break
+                if disnum < temp_num1:
+                    count = count + 1
+                    temp_dict.append(count)
+                    product_list.insert(j, temp_dict)
+                    notInsert = False
+                    break
+                elif disnum >= temp_num1 and disnum < temp_num2:
+                    count = count + 1
+                    temp_dict.append(count)
+                    product_list.insert(j + 1, temp_dict)
+                    notInsert = False
+                    break
+            if notInsert:
+                count = count + 1
+                temp_dict.append(count)
+                product_list.append(temp_dict)
+        if flag:
             print 'host one:' + hot_name
             print 'price: ', price
             print 'original price:', orig_price
             print 'discount rate: ', price / orig_price
             print ' --- '
-        elif flag:
-            if temp_dict[4] < product_list[0][4]:
-                product_list.insert(0, temp_dict)
-            else:
-                product_list.append(temp_dict)
-                print 'host one:' + hot_name
-                print 'price: ', price
-                print 'original price:', orig_price
-                print 'discount rate: ', price / orig_price
-                print ' --- '
         # elif len(type_two) != 0:
         # else:
     return 0
 
 
 def main():
-    print '123'
-    user_name = 'of_alpha12345@yahoo.com.tw'
-    password = 'aa839962'
+    user_name = args.account
+    password = args.password
     the_product_list = []
     list_popular_products(user_name, password, the_product_list)
-    print the_product_list[0][0]
-    print the_product_list[0][1]
-    print the_product_list[0][2]
-    print the_product_list[0][3]
-    print the_product_list[0][4]
-    print len(the_product_list)
-    export__list_to_csv(the_product_list)
+    export_list_to_csv(the_product_list)
 
 
 if __name__ == "__main__":
