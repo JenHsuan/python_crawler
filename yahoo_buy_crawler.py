@@ -203,11 +203,11 @@ def list_popular_products(user_name, password, product_list):
         # last_index = len(product_list) - 1
         if count == 0:
             count = count + 1
-            temp_dict.append(count)
+            # temp_dict.append(count)
             product_list.append(temp_dict)
         elif count == 1:
             count = count + 1
-            temp_dict.append(count)
+            # temp_dict.append(count)
             # compare with first one
             if disnum < product_list[1][4]:
                 product_list.insert(1, temp_dict)
@@ -225,19 +225,19 @@ def list_popular_products(user_name, password, product_list):
                     break
                 if disnum < temp_num1:
                     count = count + 1
-                    temp_dict.append(count)
+                    # temp_dict.append(count)
                     product_list.insert(j, temp_dict)
                     notInsert = False
                     break
                 elif disnum >= temp_num1 and disnum < temp_num2:
                     count = count + 1
-                    temp_dict.append(count)
+                    # temp_dict.append(count)
                     product_list.insert(j + 1, temp_dict)
                     notInsert = False
                     break
             if notInsert:
                 count = count + 1
-                temp_dict.append(count)
+                # temp_dict.append(count)
                 product_list.append(temp_dict)
         if flag:
             print 'host one:' + hot_name
@@ -245,6 +245,8 @@ def list_popular_products(user_name, password, product_list):
             print 'original price:', orig_price
             print 'discount rate: ', price / orig_price
             print ' --- '
+    for i in range(1, len(product_list)):
+        product_list[i].append(i)
         # elif len(type_two) != 0:
         # else:
     return 0
