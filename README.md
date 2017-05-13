@@ -39,4 +39,6 @@
 	* 1.start ipython notebook
 	* 2.run draw_product_discount.ipynb
 	![figure_1](https://cloud.githubusercontent.com/assets/13972975/26025717/36dd0adc-3820-11e7-92e6-22ce358dec61.png)
-
+### 5.Analysis
+* We can know that the top 20 category or brand were almost apparel or cloth brand form **product_list.csv**
+<img width="758" alt="2017-05-13 9 12 50" src="https://cloud.githubusercontent.com/assets/13972975/26025758/0cdf00ae-3821-11e7-9cde-d78cf4837d42.png">
