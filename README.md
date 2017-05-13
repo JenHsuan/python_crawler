@@ -33,3 +33,8 @@
 	
         * --
 	* 2.python yahoo_buy_crawler.py <mail> <passowrd>: start to crawl
+	<img width="566" alt="2017-05-13 9 00 34" src="https://cloud.githubusercontent.com/assets/13972975/26025692/a9d9e204-381f-11e7-812c-3900d95dd54e.png">
+	
+* draw_product_discount.ipynb
+	* 1.start ipython notebook
+	* 2.run draw_product_discount.ipynb
