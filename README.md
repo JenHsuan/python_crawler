@@ -9,7 +9,7 @@
 	* 2.**draw_product_discount.ipynb** generate the diagram from crawled data.
 
 ### 2.Limitation 
-* 1.Need Yahoo's account, password.
+* 1.Need Yahoo's account, password, you will be not allowed to get some category's information (such as 情趣專區) if you provide incorrect account and password.
 * 2.Need connected to internet before execute **yahoo_buy_crawler.py**.
 ### 3.Environment preparation
 * Something you need to install before execute **yahoo_buy_crawler.py**:
